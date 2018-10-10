@@ -19,7 +19,7 @@ public class DatosXML {
         SAXBuilder saxBuilder = new SAXBuilder();
         Document document = null;
         try {
-            URL url = new URL("http://www.aemet.es/xml/municipios/localidad_28181.xml");
+            URL url = new URL("http://www.aemet.es/xml/municipios/localidad_28079.xml");
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
             FileOutputStream fileOutputStream = new FileOutputStream("./localidad.xml");
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
@@ -44,13 +44,9 @@ public class DatosXML {
             String fecha = prediccion.getAttributeValue("fecha");
             int tempMax = Integer.parseInt(prediccion.getChild("temperatura").getChild("maxima").getText());
             int tempMin = Integer.parseInt(prediccion.getChild("temperatura").getChild("minima").getText());
-            int estadoCielo = 0;
-            for (Element estado : prediccion.getChildren("estado_cielo")) {
-                if (estado.getAttributeValue("periodo") != null && estado.getAttributeValue("periodo").equals("00-24") &&
-                        !estado.getText().equals("")) {
-                    estadoCielo = Integer.parseInt(estado.getText());
-                }
-            }
+            int estadoCielo;
+            Element estado = prediccion.getChildren("estado_cielo").get(0);
+            estadoCielo = !estado.getText().equals("") ? Integer.parseInt(estado.getText()) : 0;
             predicciones.add(new Prediccion(fecha, tempMax, tempMin, estadoCielo));
         }
         return new Localidad(nombre, provincia, predicciones);
