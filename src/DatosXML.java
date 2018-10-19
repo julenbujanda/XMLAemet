@@ -45,7 +45,17 @@ public class DatosXML {
             int tempMax = Integer.parseInt(prediccion.getChild("temperatura").getChild("maxima").getText());
             int tempMin = Integer.parseInt(prediccion.getChild("temperatura").getChild("minima").getText());
             int estadoCielo;
-            Element estado = prediccion.getChildren("estado_cielo").get(0);
+            List<Element> estados = prediccion.getChildren("estado_cielo");
+            Element estado = estados.get(0);
+            if (estado.getText().equals("")) {
+                boolean encontrado = false;
+                for (Element est : estados) {
+                    if (!est.getText().equals("") && !encontrado) {
+                        estado = est;
+                        encontrado = true;
+                    }
+                }
+            }
             estadoCielo = !estado.getText().equals("") ? Integer.parseInt(estado.getText()) : 0;
             predicciones.add(new Prediccion(fecha, tempMax, tempMin, estadoCielo));
         }
